@@ -245,6 +245,9 @@ namespace Exchange {
         ID_VALUE_POINT_CATALOG,
         ID_VALUE_POINT_CATALOG_NOTIFICATION,
         ID_ZIGWAVE
+
+        ID_TIMEZONE,
+        ID_TIMEZONE_NOTIFICATION,
     };
 }
 }
