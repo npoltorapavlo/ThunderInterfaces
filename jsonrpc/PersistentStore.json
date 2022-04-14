@@ -1,0 +1,296 @@
+{
+    "$schema": "interface.schema.json",
+    "jsonrpc": "2.0",
+    "info": {
+      "title": "PertsistentStore API",
+      "class": "PersistentStore",
+      "description": "The `PersistentStore` plugin allows you to persist key/value pairs by namespace"
+    },
+    "definitions": {
+        "namespace": {
+            "summary": "A namespace in the datastore as a valid UTF-8 string",
+            "type": "string",
+            "example": "ns1"
+        },
+        "key": {
+            "summary": "The key name as a valid UTF-8 string",
+            "type": "string",
+            "example": "key1"
+        },
+        "value": {
+            "summary": "The key value. Values are capped at 1000 characters in size.",
+            "type": "string",
+            "example": "value1"
+        },
+        "result": {
+            "type":"object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "$ref": "#/definitions/success"
+                }
+            },
+            "required": [
+                "success"
+            ]
+        },
+        "success": {
+            "summary": "Whether the request succeeded",
+            "type": "boolean",
+            "example": "true"
+        }
+    },
+    "methods": {
+        "deleteKey":{
+            "summary": "Deletes a key from the specified namespace.\n \n### Events \n\n No Events.",
+            "params": {
+                "type": "object",
+                "properties": {
+                    "namespace": {
+                        "$ref": "#/definitions/namespace"
+                    },
+                    "key": {
+                        "$ref": "#/definitions/key"
+                    }
+                },
+                "required": [
+                    "namespace",
+                    "key"
+                ]
+            },
+            "result": {
+                "$ref": "#/definitions/result"
+            }
+        },
+        "deleteNamespace":{
+            "summary": "Deletes the specified namespace.\n \n### Events \n\n No Events.",
+            "params": {
+                "type": "object",
+                "properties": {
+                    "namespace": {
+                        "$ref": "#/definitions/namespace"
+                    }
+                },
+                "required": [
+                    "namespace"
+                ]
+            },
+            "result": {
+                "$ref": "#/definitions/result"
+            }    
+        },
+        "flushCache":{
+            "summary": "Flushes the database cache by invoking `flush` in SQLite.\n \n### Events \n\n No Events.",
+            "result": {
+                "$ref": "#/definitions/result"
+            }
+        },
+        "getKeys":{
+            "summary": "Returns the keys that are stored in the specified namespace.\n \n### Events \n\n No Events.",
+            "params": {
+                "type": "object",
+                "properties": {
+                    "namespace": {
+                        "$ref": "#/definitions/namespace"
+                    }
+                },
+                "required": [
+                    "namespace"
+                ]
+            },
+            "result": {
+                "type": "object",
+                "properties": {
+                    "keys": {
+                        "summary": "A list of keys",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "example": "key1"
+                        }
+                    },
+                    "error": {
+                        "type": "string"
+                    },
+                    "success":{
+                        "$ref": "#/definitions/success"
+                    }
+                },
+                "required": [
+                    "keys",
+                    "success"
+                ]
+            }
+        },
+        "getNamespaces":{
+            "summary": "Returns the namespaces in the datastore.\n \n### Events \n\n No Events.",
+            "result": {
+                "type": "object",
+                "properties": {
+                    "namespaces": {
+                        "summary": "A list of namespaces",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "example": "ns1"
+                        }
+                    },
+                    "error": {
+                        "type": "string"
+                    },
+                    "success":{
+                        "$ref": "#/definitions/success"
+                    }
+                },
+                "required": [
+                    "namespaces",
+                    "success"
+                ]
+            }
+        },
+        "getStorageSize":{
+            "summary": "Returns the size occupied by each namespace. This is a processing-intense operation. The total size of the datastore should not exceed more than 1MB in size. If the storage size is exceeded then, new values are not stored and the `onStorageExceeded` event is sent.\n \n### Events \n\n No Events.",
+            "result": {
+                "type": "object",
+                "properties": {
+                    "namespaceSizes": {
+                        "summary": "The namespaces and their respective size",
+                        "type": "object",
+                        "properties": {
+                            "ns1": {
+                                "type": "integer",
+                                "example": 534
+                            },
+                            "ns2": {
+                                "type": "integer",
+                                "example": 234
+                            }
+                        }
+                    },
+                    "error": {
+                        "type": "string"
+                    },
+                    "success":{
+                        "$ref": "#/definitions/success"
+                    }
+                },
+                "required": [
+                    "namespaceSizes",
+                    "success"
+                ]
+            }
+        },
+        "getValue":{
+            "summary": "Returns the value of a key from the specified namespace.\n \n### Events \n\n No Events.",
+            "params": {
+                "type": "object",
+                "properties": {
+                    "namespace": {
+                        "$ref": "#/definitions/namespace"
+                    },
+                    "key": {
+                        "$ref": "#/definitions/key"
+                    }
+                },
+                "required": [
+                    "namespace",
+                    "key"
+                ]
+            },
+            "result": {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "$ref": "#/definitions/value"
+                    },
+                    "error": {
+                        "type": "string"
+                    },
+                    "success":{
+                        "$ref": "#/definitions/success"
+                    }
+                },
+                "required": [
+                    "value",
+                    "success"
+                ]
+            }
+        },
+        "setValue": {
+            "summary": "Sets the value of a key in the the specified namespace.\n \n### Events \n| Event | Description | \n| :----------- | :----------- |\n| `onStorageExceeded`| Triggered if the storage size has surpassed 1 MB storage size|\n| `onValueChanged` | Triggered whenever any of the values stored are changed using setValue |",
+            "events": [
+                "onStorageExceeded",
+                "onValueChanged"
+            ],
+            "params": {
+                "type": "object",
+                "properties": {
+                    "namespace": {
+                        "$ref": "#/definitions/namespace"
+                    },
+                    "key": {
+                        "$ref": "#/definitions/key"
+                    },
+                    "value": {
+                        "$ref": "#/definitions/value"
+                    }
+                },
+                "required": [
+                    "namespace",
+                    "key",
+                    "value"
+                ]
+            },
+            "result": {
+                "$ref": "#/definitions/result"
+            }
+        }
+    },
+    "properties": {
+        "version": {
+            "summary": "Plugin version",
+            "readonly": true,
+            "params": {
+                "type": "object",
+                "properties": {
+                    "version": {
+                        "type": "string",
+                        "example": "1.0.0"
+                    }
+                },
+                "required": [
+                    "version"
+                ]
+            }
+        }
+    },
+    "events": {
+        "onStorageExceeded":{
+            "summary": "Triggered when the storage size has surpassed the storage capacity. The total size of the datastore should not exceed more than 1MB in size."
+        },
+        "onValueChanged": {
+            "summary": "Triggered whenever any of the values stored are changed using setValue.",
+            "params": {
+                "type": "object",
+                "properties": {
+                    "namespace": {
+                        "$ref": "#/definitions/namespace"
+                    },
+                    "key": {
+                        "$ref": "#/definitions/key"
+                    },
+                    "value": {
+                        "$ref": "#/definitions/value"
+                    }
+                },
+                "required": [
+                    "namespace",
+                    "key",
+                    "value"
+                ]
+            }
+        }
+    }
+}
