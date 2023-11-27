@@ -228,6 +228,10 @@ namespace Exchange {
         ID_STORE,
         ID_STORE_NOTIFICATION,
         ID_STORE_CACHE,
+        ID_STORE2                                    = ID_STORE + 3,
+        ID_STORE2_NOTIFICATION                       = ID_STORE + 4,
+        ID_STORE_INSPECTOR                           = ID_STORE + 5,
+        ID_STORE_INSPECTOR_NAMESPACE_SIZE_ITERATOR   = ID_STORE + 6,
 
         ID_LISA,
         ID_LISA_NOTIFICATION,
