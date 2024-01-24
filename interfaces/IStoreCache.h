@@ -24,11 +24,13 @@
 namespace WPEFramework {
 namespace Exchange {
 
-struct EXTERNAL IStoreCache : virtual public Core::IUnknown {
-    enum { ID = ID_STORE_CACHE };
+    /* @json */
+    struct EXTERNAL IStoreCache : virtual public Core::IUnknown {
+        enum { ID = ID_STORE_CACHE };
 
-    virtual uint32_t FlushCache() = 0;
-};
+        // @alt flushCache
+        virtual uint32_t FlushCache() = 0;
+    };
 
 } // namespace Exchange
 } // namespace WPEFramework
